@@ -1,5 +1,7 @@
 # CUDDBuilder builder
 
+[![Build Status](https://travis-ci.org/sisl/CUDDBuilder.svg?branch=master)](https://travis-ci.org/sisl/CUDDBuilder)
+
 This repository builds binary artifacts for the CUDDBuilder project.
 This repository has a default .travis.yml file that can be used to build
 binary artifacts on Travis CI. You will however need to setup the release
