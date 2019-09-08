@@ -17,14 +17,23 @@ script = raw"""
 cd $WORKSPACE/srcdir
 cd cudd-3.0.0
 
-sed -i 's/cross_compiling=no/cross_compiling=yes/' configure
 
 if [[ "${target}" == *-mingw* ]]; then
+    sed -i 's/cross_compiling=no/cross_compiling=yes/' configure
     ./configure --prefix=$prefix --target=${target} --build=x86_64-w64-mingw32 --enable-silent-rules --enable-shared --enable-obj 
-else
-
+elif [[ "${target}" == *-apple-* ]]; then
+    sed -i 's/cross_compiling=no/cross_compiling=yes/' configure
     export CC=/opt/${target}/bin/${target}-gcc
     export CXX=/opt/${target}/bin/${target}-g++
+    ./configure --prefix=$prefix --target=${target} --enable-silent-rules --enable-shared --enable-obj
+else
+    autoreconf -fi
+    sed -i 's/cross_compiling=no/cross_compiling=yes/' configure
+    export CC=/opt/${target}/bin/${target}-gcc
+    export CXX=/opt/${target}/bin/${target}-g++
+    export LD=/opt/${target}/bin/${target}-ld
+    export LDFLAGS=-L/opt/${target}/${target}/lib64
+
     ./configure --prefix=$prefix --target=${target} --enable-silent-rules --enable-shared --enable-obj
 fi
 
@@ -37,8 +46,8 @@ make install
 # platforms are passed in on the command line
 platforms = [
     Linux(:x86_64, libc=:glibc),
-    # MacOS(:x86_64),
-    # Windows(:x86_64
+    MacOS(:x86_64),
+    Windows(:x86_64)
 ]
 
 # The products that we will ensure are always built
